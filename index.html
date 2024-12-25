@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Book Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #f5f5dc;
+        }
+
+        .book-container {
+            position: relative;
+            width: 110vw;
+            height: 200vh;
+            perspective: 1500px;
+            background: #f5f5dc;
+        }
+
+        .page {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            background: white;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            transform-origin: right;
+            backface-visibility: hidden;
+            transition: transform 0.8s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .page:nth-child(odd) {
+            transform: rotateY(0deg);
+        }
+
+        .page:nth-child(even) {
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .button {
+            background-color: #4caf50;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            opacity: 0.8;
+        }
+
+        .button:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="book-container" id="book-container">
+        <!-- Pages will be dynamically added here -->
+    </div>
+    <div class="controls">
+        <button class="button" id="prev-page">Previous</button>
+        <button class="button" id="next-page">Next</button>
+    </div>
+
+    <script>
+        const stories = [
+            "page1.html",
+            "story1.html", // First page
+            "story2.html", // Second page
+            "story3.html",
+            "story4.html",
+            "story5.html"// Add more pages here
+        ];
+
+        const bookContainer = document.getElementById("book-container");
+        let currentPage = 0;
+
+        // Create pages dynamically
+        stories.forEach((story, index) => {
+            const page = document.createElement("div");
+            page.className = "page";
+            page.innerHTML = `<iframe src="${story}" title="Story Page ${index + 1}"></iframe>`;
+            bookContainer.appendChild(page);
+        });
+
+        const pages = document.querySelectorAll(".page");
+
+        function updatePages() {
+            pages.forEach((page, index) => {
+                if (index < currentPage) {
+                    page.style.transform = "rotateY(-180deg)";
+                } else if (index === currentPage) {
+                    page.style.transform = "rotateY(0deg)";
+                } else {
+                    page.style.transform = "rotateY(180deg)";
+                }
+            });
+        }
+
+        // Next and Previous button functionality
+        document.getElementById("next-page").addEventListener("click", () => {
+            if (currentPage < stories.length - 1) {
+                currentPage++;
+                updatePages();
+            }
+        });
+
+        document.getElementById("prev-page").addEventListener("click", () => {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePages();
+            }
+        });
+
+        // Swipe handling for touch devices
+        let startX = 0;
+        document.body.addEventListener("touchstart", (event) => {
+            startX = event.changedTouches[0].clientX;
+        });
+
+        document.body.addEventListener("touchend", (event) => {
+            const endX = event.changedTouches[0].clientX;
+            const threshold = 50; // Minimum swipe distance
+            if (startX - endX > threshold) {
+                // Swipe left
+                if (currentPage < stories.length - 1) {
+                    currentPage++;
+                    updatePages();
+                }
+            } else if (endX - startX > threshold) {
+                // Swipe right
+                if (currentPage > 0) {
+                    currentPage--;
+                    updatePages();
+                }
+            }
+        });
+
+        // Initialize the first page
+        updatePages();
+    </script>
+     <audio id="myAudio" src="/flip-page-105778.mp3"></audio>
+     <script>
+       document.getElementById('next-page').addEventListener('click', function() {
+      var audio = document.getElementById('myAudio');
+      audio.play();
+    });
+    document.getElementById('prev-page').addEventListener('click', function() {
+      var audio = document.getElementById('myAudio');
+      audio.play();
+    });
+     </script>
+</body>
+</html>
